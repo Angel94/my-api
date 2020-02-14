@@ -3,12 +3,30 @@ name: PHP Composer
 on: [push]
 
 jobs:
-  build:
+  build-php:
 
     runs-on: ubuntu-latest
+    container:
+#      image: kirschbaumdevelopment/laravel-test-runner:7.2
+      image: 'angel77/my-api:latest'
+
+    services:
+      postgres:
+        image: postgres:9.6
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
     - uses: actions/checkout@v2
+
+    - run: php -v
+    - run: pwd
+    - run: ls -altr
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
